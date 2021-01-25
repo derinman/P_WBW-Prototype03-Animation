@@ -27,6 +27,21 @@ const Wrapper = styled.div`
 // and castShadow on any mesh that should create a shadow.
 
 
+const BottleAnimation = ()=>{
+  const {nodes} = useLoader(GLTFLoader, gltf, (loader) => {
+    const dracoLoader = new DRACOLoader()
+    dracoLoader.decoderPath = '/draco-gltf/'
+    loader.setDRACOLoader(dracoLoader)
+  })
+
+  console.log(nodes)
+
+  return(
+    <group>
+    </group>
+  )
+}
+
 
 extend({ OrbitControls })
 const Controls = (props) => {
@@ -61,7 +76,7 @@ function App() {
           />
 
           <Suspense fallback={null}>
-            
+            <BottleAnimation/>
           </Suspense>
 
         </Canvas>
