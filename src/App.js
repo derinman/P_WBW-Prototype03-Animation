@@ -9,7 +9,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import styled from 'styled-components';
 
-import gltf from './resources/gltf/bottleAnimation.glb'
+import bottle from './resources/gltf/bottleAnimation.glb'
+import { AmbientLight } from 'three'
 
 const Wrapper = styled.div`
   position: relative;
@@ -26,18 +27,37 @@ const Wrapper = styled.div`
 // Set receiveShadow on any mesh that should be in shadow,
 // and castShadow on any mesh that should create a shadow.
 
+const nodeToMesh =(nodes)=>{
+  return(
+  nodes.map(
+    (data)=>
+      
+      <mesh
+        key={data.name}
+        geometry={data.geometry}
+        material={data.material}
+        position={[data.position.x,data.position.y,data.position.z]}
+      />
+      
+      ))
+}
 
 const BottleAnimation = ()=>{
-  const {nodes} = useLoader(GLTFLoader, gltf, (loader) => {
+  const gltf = useLoader(GLTFLoader, bottle, (loader) => {
     const dracoLoader = new DRACOLoader()
     dracoLoader.decoderPath = '/draco-gltf/'
     loader.setDRACOLoader(dracoLoader)
   })
 
-  console.log(nodes)
 
+  //console.log(gltf)
+  console.log(Object.values(gltf.nodes))
+  //console.log(nodeToMesh(Object.values(gltf.nodes)))
+  
   return(
     <group>
+
+      {nodeToMesh(Object.values(gltf.nodes))}
     </group>
   )
 }
@@ -55,14 +75,14 @@ function App() {
   return (
       <Wrapper>
         <Canvas
-          camera={{ position: [0, 0, 40] , fov:50}}
+          camera={{ position: [0, 0, 18] , fov:50}}
           shadowMap
           colorManagement
         >
           <Controls
             //autoRotate
-            enablePan={true}
-            enableZoom={true}
+            enablePan={false}
+            enableZoom={false}
             enableDamping
             dampingFactor={0.5}
             rotateSpeed={1}
@@ -70,10 +90,12 @@ function App() {
             minPolarAngle={Math.PI / 2}
           />
           
-          <pointLight 
-            position={[0,10,0]}
-            intensity={0}
-          />
+          <pointLight intensity={1} position={[4, 0, 4]} color={'#fff'} decay={2}/>
+          <pointLight intensity={0.7} position={[-4,0, 4]} color={'#fff'} decay={2}/>
+          <pointLight intensity={0.7} position={[4, 0, -4]} color={'#fff'} decay={2}/>
+          <pointLight intensity={1} position={[-4, 0, -4]} color={'#fff'} decay={2}/>
+          
+          <pointLight intensity={2} position={[0, -3, 0]} color={'#fff'} decay={2}/>
 
           <Suspense fallback={null}>
             <BottleAnimation/>
