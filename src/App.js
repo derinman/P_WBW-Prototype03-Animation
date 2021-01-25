@@ -28,6 +28,8 @@ const Wrapper = styled.div`
 // and castShadow on any mesh that should create a shadow.
 
 const nodeToMesh =(nodes)=>{
+  
+  //動畫應該寫在這邊
   return(
   nodes.map(
     (data)=>
@@ -48,15 +50,22 @@ const BottleAnimation = ()=>{
     dracoLoader.decoderPath = '/draco-gltf/'
     loader.setDRACOLoader(dracoLoader)
   })
+  const group = useRef()
 
+  const [mixer] = useState(() => new THREE.AnimationMixer())
 
-  //console.log(gltf)
-  console.log(Object.values(gltf.nodes))
+  useEffect(() => void mixer.clipAction(gltf.animations[0], group.current).play(), [gltf.animations, mixer])
+
+  useFrame((state, delta) => {
+    mixer.update(delta *1)
+  })
+  
+  console.log(gltf)
+  //console.log(Object.values(gltf.nodes))
   //console.log(nodeToMesh(Object.values(gltf.nodes)))
   
   return(
-    <group>
-
+    <group ref={group}>
       {nodeToMesh(Object.values(gltf.nodes))}
     </group>
   )
