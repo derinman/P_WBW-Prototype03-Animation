@@ -10,7 +10,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import styled from 'styled-components';
 
 import bottle from './resources/gltf/bottleAnimation.glb'
-import { AmbientLight } from 'three'
+import tree from './resources/gltf/bottleAnimationTree.glb'
 
 const Wrapper = styled.div`
   position: relative;
@@ -50,27 +50,97 @@ const BottleAnimation = ()=>{
     dracoLoader.decoderPath = '/draco-gltf/'
     loader.setDRACOLoader(dracoLoader)
   })
-  const group = useRef()
 
-  const [mixer] = useState(() => new THREE.AnimationMixer())
-
-  useEffect(() => void mixer.clipAction(gltf.animations[0], group.current).play(), [gltf.animations, mixer])
-
-  useFrame((state, delta) => {
-    mixer.update(delta *1)
-  })
-  
-  console.log(gltf)
-  //console.log(Object.values(gltf.nodes))
+  //console.log(gltf)
   //console.log(nodeToMesh(Object.values(gltf.nodes)))
   
   return(
-    <group ref={group}>
+    <group>
       {nodeToMesh(Object.values(gltf.nodes))}
     </group>
   )
 }
 
+const BottleAnimationTree=()=>{
+  const gltf = useLoader(GLTFLoader, tree, (loader) => {
+    const dracoLoader = new DRACOLoader()
+    dracoLoader.decoderPath = '/draco-gltf/'
+    loader.setDRACOLoader(dracoLoader)
+  })
+
+  //console.log(gltf)
+  const leaf1 = useRef()
+  const leaf2 = useRef()
+  const leaf3 = useRef()
+  const leaf4 = useRef()
+
+  const [mixerLeaf1] = useState(() => new THREE.AnimationMixer())
+  const [mixerLeaf2] = useState(() => new THREE.AnimationMixer())
+  const [mixerLeaf3] = useState(() => new THREE.AnimationMixer())
+  const [mixerLeaf4] = useState(() => new THREE.AnimationMixer())
+
+  useEffect(() => void mixerLeaf1.clipAction(gltf.animations[0], leaf1.current).play(), [gltf.animations, mixerLeaf1])
+  useEffect(() => void mixerLeaf2.clipAction(gltf.animations[1], leaf2.current).play(), [gltf.animations, mixerLeaf2])
+  useEffect(() => void mixerLeaf3.clipAction(gltf.animations[2], leaf3.current).play(), [gltf.animations, mixerLeaf3])
+  useEffect(() => void mixerLeaf4.clipAction(gltf.animations[3], leaf4.current).play(), [gltf.animations, mixerLeaf4])
+
+  useFrame((state, delta) => {
+    mixerLeaf1.update(delta *1)
+    mixerLeaf2.update(delta *1)
+    mixerLeaf3.update(delta *1)
+    mixerLeaf4.update(delta *1)
+  })
+  
+  return(
+    <group>
+      <mesh 
+        geometry={gltf.nodes.Trunk1001.geometry}
+        material={gltf.nodes.Trunk1001.material}
+        position={[gltf.nodes.Trunk1001.position.x,gltf.nodes.Trunk1001.position.y,gltf.nodes.Trunk1001.position.z]}
+      />
+      <mesh 
+        geometry={gltf.nodes.Trunk2001.geometry}
+        material={gltf.nodes.Trunk2001.material}
+        position={[gltf.nodes.Trunk2001.position.x,gltf.nodes.Trunk2001.position.y,gltf.nodes.Trunk2001.position.z]}
+      />
+      <mesh 
+        geometry={gltf.nodes.Trunk3001.geometry}
+        material={gltf.nodes.Trunk3001.material}
+        position={[gltf.nodes.Trunk3001.position.x,gltf.nodes.Trunk3001.position.y,gltf.nodes.Trunk3001.position.z]}
+      />
+      <mesh 
+        geometry={gltf.nodes.Trunk4001.geometry}
+        material={gltf.nodes.Trunk4001.material}
+        position={[gltf.nodes.Trunk4001.position.x,gltf.nodes.Trunk4001.position.y,gltf.nodes.Trunk4001.position.z]}
+      />
+
+      <mesh
+        ref={leaf1}
+        geometry={gltf.nodes.Leaf1001.geometry}
+        material={gltf.nodes.Leaf1001.material}
+        position={[gltf.nodes.Leaf1001.position.x,gltf.nodes.Leaf1001.position.y,gltf.nodes.Leaf1001.position.z]}
+      />
+      <mesh
+        ref={leaf3}
+        geometry={gltf.nodes.Leaf2001.geometry}
+        material={gltf.nodes.Leaf2001.material}
+        position={[gltf.nodes.Leaf2001.position.x,gltf.nodes.Leaf2001.position.y,gltf.nodes.Leaf2001.position.z]}
+      />
+      <mesh
+        ref={leaf2}
+        geometry={gltf.nodes.Leaf3001.geometry}
+        material={gltf.nodes.Leaf3001.material}
+        position={[gltf.nodes.Leaf3001.position.x,gltf.nodes.Leaf3001.position.y,gltf.nodes.Leaf3001.position.z]}
+      />
+      <mesh
+        ref={leaf4}
+        geometry={gltf.nodes.Leaf4001.geometry}
+        material={gltf.nodes.Leaf4001.material}
+        position={[gltf.nodes.Leaf4001.position.x,gltf.nodes.Leaf4001.position.y,gltf.nodes.Leaf4001.position.z]}
+      />
+    </group>
+  )
+}
 
 extend({ OrbitControls })
 const Controls = (props) => {
@@ -89,7 +159,7 @@ function App() {
           colorManagement
         >
           <Controls
-            //autoRotate
+            autoRotate
             enablePan={false}
             enableZoom={false}
             enableDamping
@@ -108,6 +178,7 @@ function App() {
 
           <Suspense fallback={null}>
             <BottleAnimation/>
+            <BottleAnimationTree/>
           </Suspense>
 
         </Canvas>
